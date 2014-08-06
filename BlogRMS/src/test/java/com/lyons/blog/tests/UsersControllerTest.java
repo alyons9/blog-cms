@@ -33,7 +33,7 @@ public class UsersControllerTest {
 	@Mock
 	UserService userService;
 	
-	User user = new User(1, "Anthony", "Lyons", "alyons@test.com");
+	User user = new User(1, "Anthony", "Lyons", "alyons@test.com", "alyons");
 
 	@Before
 	public void setup(){
@@ -65,9 +65,27 @@ public class UsersControllerTest {
 		
 		try {
 			this.mockMvc.perform(
-					post("/user?fn={fn}&ln={ln}&un={un}", user.getFirstName(), user.getLastName(), user.getEmail())
+					post("/user/{key}?fn={fn}&ln={ln}&em={un}", -1,user.getFirstName(), user.getLastName(), user.getEmail())
 					.accept(MediaType.APPLICATION_JSON)
 					)
+					.andExpect(jsonPath("$.success").value(true))
+					.andExpect(status().isOk());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void testUserNotCreatedSuccesfully(){
+		when(userService.createNewUser(any(User.class))).thenReturn(userNotCreated(user));
+		
+		try {
+			this.mockMvc.perform(
+					post("/user/{key}?fn={fn}&ln={ln}&em={un}", -1,user.getFirstName(), user.getLastName(), user.getEmail())
+					.accept(MediaType.APPLICATION_JSON)
+					)
+					.andExpect(jsonPath("$.success").value(false))
 					.andExpect(status().isOk());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -81,8 +99,23 @@ public class UsersControllerTest {
 		
 		try{
 			this.mockMvc.perform(
-			put("/user/{key}?fn={fn}&ln={ln}&un={un}", user.getKey(), user.getFirstName(), user.getLastName(), user.getEmail()))
-			.andExpect(status().isOk());
+			put("/user/{key}?fn={fn}&ln={ln}&em={un}", user.getKey(), user.getFirstName(), user.getLastName(), user.getEmail()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true));
+		}catch(Exception e){
+			
+		}
+	}
+	
+	@Test
+	public void testUserNotUpdatedSuccessfully(){
+		when(userService.updateUser(any(User.class))).thenReturn(userNotCreated(user));
+		
+		try{
+			this.mockMvc.perform(
+			put("/user/{key}?fn={fn}&ln={ln}&em={un}", user.getKey(), user.getFirstName(), user.getLastName(), user.getEmail()))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(false));
 		}catch(Exception e){
 			
 		}

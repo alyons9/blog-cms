@@ -1,18 +1,34 @@
 package com.lyons.blog.data;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+
+@Entity(name = "TOPIC")
 public class Topic {
+	@Id
+	@Column(name = "id")
 	private int key;
-	private String name;
+	@Column(name = "header")
 	private String header;
+	@Column(name = "body")
 	private String body;
+	@Column(name = "created_on")
 	private Date createdDate;
-	public Topic(int key, String name, String header, String body,
+	@OneToMany(mappedBy="topic")
+//	@JoinTable(name = "COMMENT", joinColumns=@JoinColumn(name="ID"))
+	private List<Comment> comments;
+	public Topic(){}
+	public Topic(int key, String header, String body,
 			Date createdDate) {
 		super();
 		this.key = key;
-		this.name = name;
 		this.header = header;
 		this.body = body;
 		this.createdDate = createdDate;
@@ -22,12 +38,6 @@ public class Topic {
 	}
 	public void setKey(int key) {
 		this.key = key;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public String getHeader() {
 		return header;
@@ -46,6 +56,12 @@ public class Topic {
 	}
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+	public List<Comment> getComments() {
+		return comments;
+	}
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 	
 }
